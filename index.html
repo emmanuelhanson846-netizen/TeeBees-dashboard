@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeeBees · The Creator Hive</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐝</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script>
+    // apply saved theme before first paint (no flash). "system" follows your device setting.
+    (function () {
+      var pref = localStorage.getItem("teebees.theme") || "system";
+      var dark = pref === "dark" || (pref === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.dataset.theme = dark ? "dark" : "light";
+    })();
+  </script>
+</head>
+<body>
+  <div class="app viz-root">
+    <!-- ───────── Sidebar ───────── -->
+    <aside class="sidebar">
+      <div class="brand">
+        <svg class="bee" viewBox="0 0 64 64" aria-hidden="true">
+          <ellipse class="wing w1" cx="24" cy="18" rx="10" ry="14" />
+          <ellipse class="wing w2" cx="40" cy="18" rx="10" ry="14" />
+          <ellipse cx="32" cy="38" rx="16" ry="20" fill="#f5b301" />
+          <rect x="16" y="32" width="32" height="5" fill="#1a1a19" />
+          <rect x="17" y="43" width="30" height="5" fill="#1a1a19" />
+          <circle cx="26" cy="24" r="2.5" fill="#1a1a19" />
+          <circle cx="38" cy="24" r="2.5" fill="#1a1a19" />
+        </svg>
+        <div>
+          <strong>TeeBees</strong>
+          <span>The Creator Hive</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#overview" class="active"><span>⬡</span> Overview</a>
+        <a href="#insights"><span>⬡</span> Insights</a>
+        <a href="#works"><span>⬡</span> Works Pipeline</a>
+        <a href="#top"><span>⬡</span> Top Works</a>
+        <a href="#goals"><span>⬡</span> Goals & Buzz</a>
+        <a href="#accounts"><span>⬡</span> Accounts</a>
+      </nav>
+
+      <div class="hive-status">
+        <p class="eyebrow">Hive status</p>
+        <p id="hiveStatus" class="hive-status-text">Buzzing…</p>
+        <div class="streak">
+          <span id="streakDays">0</span>
+          <small>day posting streak 🔥</small>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ───────── Main ───────── -->
+    <main class="main">
+      <header class="topbar" id="overview">
+        <div>
+          <h1 id="greeting">Good day, Queen Bee</h1>
+          <p class="subtle" id="subGreeting">Here's how your works are pollinating the internet.</p>
+          <p class="live-badge" id="liveBadge"><i></i><span>Demo data</span></p>
+        </div>
+        <div class="controls">
+          <div class="segmented" role="radiogroup" aria-label="Date range">
+            <button role="radio" data-range="7">7D</button>
+            <button role="radio" data-range="30" class="on">30D</button>
+            <button role="radio" data-range="90">90D</button>
+          </div>
+          <div class="segmented theme-switch" role="radiogroup" aria-label="Theme">
+            <button role="radio" data-theme-pref="light" title="Light mode">☀ Light</button>
+            <button role="radio" data-theme-pref="dark" title="Dark mode">☾ Dark</button>
+            <button role="radio" data-theme-pref="system" title="Match my device">Auto</button>
+          </div>
+          <button id="newWorkBtn" class="btn-primary">+ New work</button>
+          <div class="user-menu" id="userMenu" hidden>
+            <button class="avatar-btn" id="avatarBtn" aria-haspopup="true" aria-expanded="false"></button>
+            <div class="menu" id="userDropdown" hidden>
+              <div class="menu-head" id="menuHead"></div>
+              <a href="#accounts" id="menuAccounts">⬡ Manage accounts</a>
+              <button id="signOutBtn">↩ Sign out</button>
+            </div>
+          </div>
+          <a class="ghost-btn" id="signInLink" href="/login.html" hidden>Sign up / Log in</a>
+        </div>
+      </header>
+
+      <div class="filters" id="platformFilters" aria-label="Platform filters"></div>
+
+      <!-- KPI tiles -->
+      <section class="kpis" id="kpis"></section>
+
+      <!-- Reach + Hive -->
+      <section class="grid grid-2-1" id="insights">
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2>Reach over time</h2>
+              <p class="subtle" id="reachSub">Daily accounts reached, per platform</p>
+            </div>
+            <button class="ghost-btn" id="reachTableToggle" aria-pressed="false">Table view</button>
+          </div>
+          <div class="legend" id="reachLegend"></div>
+          <div id="reachChart" class="chart"></div>
+          <div id="reachTable" class="table-wrap" hidden></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2>The Hive</h2>
+              <p class="subtle">Followers per platform · growth this period</p>
+            </div>
+          </div>
+          <div id="honeycomb" class="honeycomb"></div>
+        </article>
+      </section>
+
+      <!-- Share / heatmap / pollen -->
+      <section class="grid grid-3">
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2>Engagement by platform</h2>
+              <p class="subtle">Likes, comments, shares & saves</p>
+            </div>
+          </div>
+          <div id="engBars" class="hbars"></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2>Golden hours</h2>
+              <p class="subtle">When your audience engages most</p>
+            </div>
+          </div>
+          <div id="heatmap" class="heatmap"></div>
+          <div class="heat-scale"><span>Low</span><i></i><span>High</span></div>
+        </article>
+
+        <article class="card pollen-card">
+          <div class="card-head">
+            <div>
+              <h2>Pollen Score</h2>
+              <p class="subtle">Your overall creator health, 0–100</p>
+            </div>
+          </div>
+          <div id="pollen"></div>
+        </article>
+      </section>
+
+      <!-- Works pipeline -->
+      <section class="card" id="works">
+        <div class="card-head">
+          <div>
+            <h2>Works pipeline</h2>
+            <p class="subtle" id="worksSub">Drag works between stages. Saved in your browser.</p>
+          </div>
+          <input id="workSearch" class="search" type="search" placeholder="Search works…" aria-label="Search works" />
+        </div>
+        <div class="kanban" id="kanban"></div>
+      </section>
+
+      <!-- Top works + goals/buzz -->
+      <section class="grid grid-2-1">
+        <article class="card" id="top">
+          <div class="card-head">
+            <div>
+              <h2>Top performing works</h2>
+              <p class="subtle">Click a column to sort</p>
+            </div>
+          </div>
+          <div class="table-wrap" id="topWorks"></div>
+        </article>
+
+        <article class="card" id="goals">
+          <div class="card-head">
+            <div>
+              <h2>Honey jars</h2>
+              <p class="subtle">Goals you're filling up</p>
+            </div>
+          </div>
+          <div id="goalList" class="goals"></div>
+          <h3 class="buzz-title">The Buzz</h3>
+          <ul id="buzzFeed" class="buzz"></ul>
+        </article>
+      </section>
+
+      <!-- Accounts: add / remove the social accounts this hive tracks -->
+      <section class="card" id="accounts">
+        <div class="card-head">
+          <div>
+            <h2>Your accounts</h2>
+            <p class="subtle" id="accountsSub">Add the social accounts you want TeeBees to track.</p>
+          </div>
+        </div>
+        <div id="accountsBody"></div>
+      </section>
+
+      <footer class="foot" id="footNote">Made with 🍯 by TeeBees</footer>
+    </main>
+  </div>
+
+  <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+
+  <!-- New work dialog -->
+  <dialog id="workDialog">
+    <form method="dialog" id="workForm">
+      <h2>Add a new work</h2>
+      <label>Title
+        <input name="title" required maxlength="80" placeholder="e.g. Behind the scenes of my studio" />
+      </label>
+      <div class="row">
+        <label>Platform
+          <select name="platform" id="platformSelect"></select>
+        </label>
+        <label>Format
+          <select name="type">
+            <option>Reel</option><option>Short</option><option>Video</option>
+            <option>Carousel</option><option>Thread</option><option>Story</option><option>Live</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <label>Stage
+          <select name="status">
+            <option value="idea">Idea</option>
+            <option value="drafting">Drafting</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="live">Live</option>
+          </select>
+        </label>
+        <label>Date
+          <input name="date" type="date" required />
+        </label>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="ghost-btn" id="cancelWork">Cancel</button>
+        <button type="submit" class="btn-primary">Add to hive</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/data.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
